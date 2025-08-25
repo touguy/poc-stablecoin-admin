@@ -1,12 +1,12 @@
-// 발행 목록 조회 REQ DTO
-export interface SearchReqMintList {
+// 환불 목록 조회 REQ DTO
+export interface SearchReqRedeemList {
   userId: number; 
   roleId: number;
   chainId: number; 
 }
 
-// 발행 목록 조회 RES DTO
-export interface SearchReqMintListRes {
+// 환불 목록 조회 RES DTO
+export interface SearchReqRedeemListRes {
   id: number;
   trackingRef: string;
   chain: {
@@ -16,8 +16,9 @@ export interface SearchReqMintListRes {
   userId: string;
   date: string;
   requestTokenAmount: number;
-  mint: {
-    mintToAddress: string;
+  redeem: {
+    redeemBankAccount: string;
+    redeemFromAddress: string;
   };
   reqAt: string;
   reqUsrLoginId : string;
