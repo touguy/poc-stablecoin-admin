@@ -13,7 +13,7 @@ export const api = axios.create({
 
 // 응답 인터셉터 (data 바로 리턴)
 api.interceptors.response.use(
-  (res) => res,
+  (res) => res.data,
   (err) => {
     // 서버 에러 메시지 포맷에 맞게 가공
     const msg =
