@@ -1,5 +1,5 @@
-// src/store/authStore.ts
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 type User = {
   id: string
@@ -13,17 +13,25 @@ type AuthStore = {
   logout: () => void
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  setUser: (user) =>
-    set({
-      user,
-      isAuthenticated: !!user,
-    }),
-  logout: () =>
-    set({
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
       user: null,
       isAuthenticated: false,
+      setUser: (user) =>
+        set({
+          user,
+          isAuthenticated: !!user,
+        }),
+      logout: () =>
+        set({
+          user: null,
+          isAuthenticated: false,
+        }),
     }),
-}))
+    {
+      name: 'auth-storage', // localStorage 키 이름
+      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+    }
+  )
+)
