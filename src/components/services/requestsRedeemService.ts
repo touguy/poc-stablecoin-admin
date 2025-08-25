@@ -1,14 +1,14 @@
-import { SearchReqMintList } from "@/types/requestsMint";
+import { SearchReqRedeemList } from "@/types/requestsRedeem";
 import { CommonResponse } from "@/types/response";
 import { fetcher } from "@/utils/fetcher";
 import { AxiosError } from "axios";
 import useSWR from "swr";
 
-export const requestsMintService = {
-  // 발행 요청 목록 조회
-  useGetList: (dto: SearchReqMintList, errorCallback?: any) => {
+export const requestsRedeemService = {
+  // 환불 요청 목록 조회
+  useGetList: (dto: SearchReqRedeemList, errorCallback?: any) => {
     return useSWR<CommonResponse, AxiosError>(
-      `/requests-mint/get`, // key에 params 포함
+      `/requests-redeem/get`, // key에 params 포함
       (url) => fetcher(url, dto, { errorCallback }),
       {
         revalidateOnFocus: false, // 포커스 시 재검증 비활성화
@@ -17,5 +17,4 @@ export const requestsMintService = {
       }
     );
   },
-  // 발행 요청 상세 조회
 };
