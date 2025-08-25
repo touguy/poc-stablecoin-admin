@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 interface ProfileButtonProps {
@@ -6,10 +7,13 @@ interface ProfileButtonProps {
 
 const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(localStorage.getItem('address') || '');
+      await navigator.clipboard.writeText(
+        localStorage.getItem("address") || ""
+      );
       alert("지갑주소가 복사되었습니다.");
       setOpen(false);
     } catch {
@@ -20,12 +24,11 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
   const handleLogout = () => {
     setOpen(false);
     onLogout();
-    // 메타마스크 연결 해제 안내 및 연결 관리 페이지 오픈
-    alert("메타마스크에서 직접 연결 해제를 원하시면 '연결된 사이트' 관리에서 해제하세요.");
+    router.replace("/login");
   };
 
   return (
-    <div  className="absolute right-24 p-2 rounded hover:bg-gray-100">
+    <div className="absolute right-24 p-2 rounded hover:bg-gray-100">
       <button
         className="px-4 py-2 bg-gray-100 text-black-700 rounded-lg border border-gray-300 hover:bg-gray-200"
         type="button"
