@@ -1,5 +1,5 @@
+import { api } from "@/lib/axios";
 import { AxiosRequestConfig } from "axios";
-import axiosInstance from "./axios";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   errorCallback?: any;
@@ -12,9 +12,9 @@ const fetch = async (
   params?: object,
   config?: CustomAxiosRequestConfig
 ) => {
-  const fullUrl = `${axiosInstance.defaults.baseURL}${url}`;
+  const fullUrl = `${api.defaults.baseURL}${url}`;
   console.log(fullUrl);
-  const response = await axiosInstance.post(fullUrl, params, {
+  const response = await api.post(fullUrl, params, {
     ...config,
   });
   return response.data;
