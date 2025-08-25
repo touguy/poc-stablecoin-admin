@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios";
+import { api } from "@/utils/axios";
 import { AxiosRequestConfig } from "axios";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
