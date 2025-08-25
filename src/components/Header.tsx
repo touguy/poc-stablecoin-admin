@@ -1,10 +1,10 @@
 import Link from "next/link";
 import ProfileButton from "./ProfileButton";
-import { useAuthStore } from "@/stores/authStore";
+import { useLogin } from "@/hooks/useLogin";
 
 const Header = () => {
   //user context에서 account 정보 가져오기
-  const { logout } = useAuthStore();
+  const { logout } = useLogin();
 
   // 햄버거 버튼 클릭 시 (예시: alert)
   const handleMenu = () => {
