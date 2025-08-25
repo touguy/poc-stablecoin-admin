@@ -1,8 +1,8 @@
 // src/hooks/useLogin.ts
 
-import { api } from "@/lib/axios";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginReq } from "@/types/auth";
+import { api } from "@/utils/axios";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useState } from "react";
 
