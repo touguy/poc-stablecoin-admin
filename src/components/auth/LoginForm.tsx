@@ -1,22 +1,19 @@
-'use client';
+import { useLogin } from "@/hooks/useLogin";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
-import { useLogin } from '@/hooks/useLogin';
-import { useState } from 'react';
-
-type Props = {
-  onSuccess?: () => void;
-};
-
-export default function LoginForm({ onSuccess }: Props) {
+export default function LoginForm() {
   const { login, loading, error } = useLogin();
-  const [username, setUsername] = useState("");
+  const router = useRouter();
+
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login({ username, password });
-      onSuccess?.();
+      await login({ loginId, password });
+      router.push("/list"); // 로그인 성공 시 대시보드로 이동
     } catch {
       // error는 훅에서 관리
     }
@@ -25,11 +22,11 @@ export default function LoginForm({ onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="max-w-sm space-y-3">
       <div>
-        <label className="block text-sm font-medium">Username</label>
+        <label className="block text-sm font-medium">loginId</label>
         <input
           className="mt-1 w-full rounded border p-2"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={loginId}
+          onChange={(e) => setLoginId(e.target.value)}
           autoComplete="username"
         />
       </div>
@@ -52,7 +49,7 @@ export default function LoginForm({ onSuccess }: Props) {
         disabled={loading}
         className="w-full rounded bg-black p-2 text-white disabled:opacity-60"
       >
-        {loading ? 'Signing in…' : 'Sign in'}
+        {loading ? "Signing in…" : "Sign in"}
       </button>
     </form>
   );
