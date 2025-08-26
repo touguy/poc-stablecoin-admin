@@ -1,5 +1,5 @@
 import CommonModal from "@/components/common/CommonModal";
-import { requestsMintService } from "@/components/services/requestsMintService";
+import { requestsMintService } from "@/components/services/RequetsMintService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";

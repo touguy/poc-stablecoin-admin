@@ -1,4 +1,4 @@
-import { requestsRedeemService } from "@/components/services/requestsRedeemService";
+import { requestsRedeemService } from "@/components/services/RequestsRedeemService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqRedeemListRes } from "@/types/requestsRedeem";
 import { formatDateTime } from "@/utils/formater";
