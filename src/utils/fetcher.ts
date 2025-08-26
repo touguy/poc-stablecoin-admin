@@ -1,3 +1,4 @@
+import { CommonResponse } from "@/types/response";
 import { api } from "@/utils/axios";
 import { AxiosRequestConfig } from "axios";
 
@@ -7,17 +8,17 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 // swr 용 fetcher 함수
+// fetcher.ts
 const fetch = async (
   url: string,
   params?: object,
   config?: CustomAxiosRequestConfig
-) => {
+): Promise<CommonResponse> => {
   const fullUrl = `${api.defaults.baseURL}${url}`;
-  console.log(fullUrl);
-  const response = await api.post(fullUrl, params, {
+  const rawResponse: CommonResponse = await api.post(fullUrl, params, {
     ...config,
   });
-  return response.data;
-};
 
+  return rawResponse;
+};
 export const fetcher = fetch;
