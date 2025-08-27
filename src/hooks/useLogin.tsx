@@ -1,5 +1,3 @@
-// src/hooks/useLogin.ts
-
 import { useAuthStore } from "@/stores/authStore";
 import { LoginReq } from "@/types/auth";
 import { api } from "@/utils/axios";
@@ -13,7 +11,7 @@ interface DecodedToken {
 }
 
 export function useLogin() {
-  const { setUser } = useAuthStore(); 
+  const { setUser, logout: resetAuthStore } = useAuthStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,19 +54,23 @@ export function useLogin() {
     setLoading(true);
     setError(null);
     try {
-      // await api.post('/auth/logout');
-      setUser(null);
+      resetAuthStore(); // Zustand 상태 초기화
+
+      // 로컬스토리지 정리
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       localStorage.removeItem("username");
       localStorage.removeItem("address");
+      localStorage.removeItem("auth-storage");
+
     } catch (e: any) {
-      setError(e.message ?? "로그아웃에 실패했습니다.");
-      throw e;
+      const message = e?.message ?? "로그아웃에 실패했습니다.";
+      setError(message);
+      throw new Error(message);
     } finally {
       setLoading(false);
     }
-  }, [setUser]);
+  }, [resetAuthStore]);
 
   const decodeToken = (token: string): DecodedToken | null => {
     try {
