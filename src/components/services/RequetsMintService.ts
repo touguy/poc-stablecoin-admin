@@ -1,5 +1,8 @@
-import { MintManage, SearchReqMintList, SearchReqMintTxList } from "@/types/requestsMint";
-import { CommonResponse } from "@/types/response";
+import {
+    MintManage,
+    SearchReqMintList,
+    SearchReqMintTxList,
+} from "@/types/requestsMint";
 import { api } from "@/utils/axios";
 import { fetcher } from "@/utils/fetcher";
 import { AxiosError } from "axios";
@@ -8,8 +11,8 @@ import useSWR from "swr";
 export const requestsMintService = {
   // 발행 요청 목록 조회
   useGetList: (dto: SearchReqMintList, errorCallback?: any) => {
-    return useSWR<CommonResponse, AxiosError>(
-      `/requests-mint/get`, // key에 params 포함
+    return useSWR<any, AxiosError>(
+      `/requests-mint/get/admin`, // key에 params 포함
       (url) => fetcher(url, dto, { errorCallback }),
       {
         revalidateOnFocus: false, // 포커스 시 재검증 비활성화

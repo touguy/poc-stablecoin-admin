@@ -3,7 +3,8 @@ import { requestsMintService } from "@/components/services/RequetsMintService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import RequestConfirmCard from "../../RequestConfirmCard";
 
 const tableHeaders = [
   { key: "trackingRef", label: "거래번호", width: "w-28" },
@@ -19,22 +20,25 @@ const tableHeaders = [
 ];
 
 export default function MintListTable() {
-  const body = {
-    roleId: 1,
-    chainId: 1,
-  };
   const { user } = useAuthStore();
   // 상태 관리
-
   const [selectedRequestId, setSelectedRequestId] = useState<number>(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [actionStatus, setActionStatus] = useState<"승인" | "거절">("승인");
+  //검색 관련 상태
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
 
   // 목록 조회
   const { data, isLoading, mutate } = requestsMintService.useGetList({
-    userId: Number(user?.id) || 0,
-    roleId: Number(body.roleId) || 0,
-    chainId: Number(body.chainId) || 0,
+    page,
+    limit,
+    search: searchKeyword,
   });
+
+  console.log(data);
 
   /**
    * 트랜잭션 상세 모달
@@ -45,41 +49,25 @@ export default function MintListTable() {
   };
 
   /**
-   * 발행 승인
+   * 발행 승인/거절
    */
-  const handleApprove = (id: number) => {
-    requestsMintService
-      .manage({
+  const handleAction = async (id: number, action: "승인" | "거절") => {
+    try {
+      await requestsMintService.manage({
         userId: Number(user?.id) || 0,
-        requestId: id!,
-        actionStatus: "승인",
-      })
-      .then((res) => {
-        alert("승인 처리되었습니다.");
-        mutate(); // 목록 갱신
-      })
-      .catch((err) => {
-        alert("처리 중 오류가 발생했습니다.");
+        requestId: id,
+        actionStatus: action,
       });
+      alert(`${action} 처리되었습니다.`);
+      mutate();
+    } catch {
+      alert("처리 중 오류가 발생했습니다.");
+    }
   };
-  /**
-   * 발행 거절
-   */
-  const handleReject = (id: number) => {
-    requestsMintService
-      .manage({
-        userId: Number(user?.id) || 0,
-        requestId: id!,
-        actionStatus: "거절",
-      })
-      .then((res) => {
-        alert("거절 처리되었습니다.");
-        mutate(); // 목록 갱신
-      })
-      .catch((err) => {
-        alert("처리 중 오류가 발생했습니다.");
-      });
-  };
+
+  useEffect(() => {
+    mutate();
+  }, [page, limit]);
 
   return (
     <>
@@ -89,6 +77,36 @@ export default function MintListTable() {
         <>
           <div className="p-4">
             <h3 className="text-lg font-semibold mb-2">발행 신청내역</h3>
+            <input
+              className="border px-2 py-1 rounded"
+              placeholder="검색"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+            <button
+              className="ml-2 px-3 py-1 border bg-gray-100 rounded hover:bg-gray-200 text-sm"
+              onClick={() => {
+                setPage(1); // 검색 시 페이지 초기화
+                mutate();
+              }}
+            >
+              검색
+            </button>
+            <div>
+              <label className="mr-2 text-sm">페이지당 항목:</label>
+              <select
+                className="border px-2 py-1 rounded text-sm"
+                value={limit}
+                onChange={(e) => {
+                  setPage(1); // 페이지 초기화
+                  setLimit(Number(e.target.value));
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+              </select>
+            </div>
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white rounded shadow border text-sm table-fixed">
                 <thead>
@@ -101,7 +119,7 @@ export default function MintListTable() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.data.map((row: SearchReqMintListRes) => (
+                  {data?.data.items.map((row: SearchReqMintListRes) => (
                     <tr key={row.id} className="border-t text-center">
                       <td className="p-2">{row.trackingRef}</td>
                       <td className="p-2">
@@ -125,12 +143,20 @@ export default function MintListTable() {
                           <>
                             <button
                               className="text-green-600 mr-2"
-                              onClick={() => handleApprove(row.id)}
+                              onClick={() => {
+                                setSelectedRequestId(row.id);
+                                setActionStatus("승인");
+                                setIsConfirmOpen(true);
+                              }}
                             >
                               승인
                             </button>
                             <button
-                              onClick={() => handleReject(row.id)}
+                              onClick={() => {
+                                setSelectedRequestId(row.id);
+                                setActionStatus("거절");
+                                setIsConfirmOpen(true);
+                              }}
                               className="text-red-600"
                             >
                               거절
@@ -150,12 +176,46 @@ export default function MintListTable() {
                 </tbody>
               </table>
             </div>
+            <div className="flex justify-center mt-4 space-x-2">
+              {Array.from(
+                { length: data?.data.meta.totalPages || 1 },
+                (_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => {
+                        setPage(pageNum);
+                      }}
+                      className={`px-3 py-1 border rounded ${
+                        page === pageNum
+                          ? "bg-blue-500 text-white"
+                          : "bg-white text-blue-500"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                }
+              )}
+            </div>
           </div>
           <CommonModal
             requestId={selectedRequestId}
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
             title="트랜잭션 상세"
+          />
+          <RequestConfirmCard
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            method="발행"
+            actionStatus={actionStatus}
+            title="서명 요청"
+            handleConfirm={() => handleAction(selectedRequestId, actionStatus)}
+            data={data?.data.items.find(
+              (item: any) => item.id === selectedRequestId
+            )}
           />
         </>
       )}

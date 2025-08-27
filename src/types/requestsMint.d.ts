@@ -1,8 +1,8 @@
 // 발행 목록 조회 REQ DTO
 export interface SearchReqMintList {
-  userId: number; 
-  roleId: number;
-  chainId: number; 
+  page: number; 
+  limit: number;
+  search?: string;
 }
 
 // 발행 목록 조회 RES DTO
