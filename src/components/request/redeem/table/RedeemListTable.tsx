@@ -1,10 +1,11 @@
-import CommonModal from "@/components/common/CommonModal";
+import CommonModal from "@/components/request/RequestDetailCard";
 import { requestsRedeemService } from "@/components/services/RequestsRedeemService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqRedeemListRes } from "@/types/requestsRedeem";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { useEffect, useState } from "react";
 import RequestConfirmCard from "../../RequestConfirmCard";
+import RequestDetailCard from "@/components/request/RequestDetailCard";
 
 const tableHeaders = [
   { key: "trackingRef", label: "거래번호", width: "w-28" },
@@ -199,7 +200,7 @@ export default function RedeemListTable() {
               )}
             </div>
           </div>
-          <CommonModal
+          <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}

@@ -1,10 +1,10 @@
-import CommonModal from "@/components/common/CommonModal";
 import { requestsMintService } from "@/components/services/RequetsMintService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { useEffect, useState } from "react";
 import RequestConfirmCard from "../../RequestConfirmCard";
+import RequestDetailCard from "../../RequestDetailCard";
 
 const tableHeaders = [
   { key: "trackingRef", label: "거래번호", width: "w-28" },
@@ -37,8 +37,6 @@ export default function MintListTable() {
     limit,
     search: searchKeyword,
   });
-
-  console.log(data);
 
   /**
    * 트랜잭션 상세 모달
@@ -200,12 +198,18 @@ export default function MintListTable() {
               )}
             </div>
           </div>
-          <CommonModal
+          <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
             title="트랜잭션 상세"
+            explorerUrl={
+              data?.data?.items?.find(
+                (item: any) => item.id === selectedRequestId
+              )?.chain?.explorerUrl || ""
+            }
           />
+
           <RequestConfirmCard
             isOpen={isConfirmOpen}
             onClose={() => setIsConfirmOpen(false)}
