@@ -21,8 +21,8 @@ const Sidebar = () => {
               </h2>
               {isTokenMenuOpen && (
                 <div className="space-y-2 pl-4">
-                  <Link href="/list" className="block hover:text-gray-300"> - 발행/환불 현황</Link>
-                  <Link href="/list" className="block hover:text-gray-300"> - 발행/환불 관리</Link>
+                  <Link href="/request-list" className="block hover:text-gray-300"> - 발행/환불 현황</Link>
+                  <Link href="/request-list" className="block hover:text-gray-300"> - 발행/환불 관리</Link>
                 </div>
               )}
             </div>

@@ -13,7 +13,7 @@ export default function LoginForm() {
     e.preventDefault();
     try {
       await login({ loginId, password });
-      router.push("/list"); // 로그인 성공 시 대시보드로 이동
+      router.push("/request-list"); // 로그인 성공 시 대시보드로 이동
     } catch {
       // error는 훅에서 관리
     }
