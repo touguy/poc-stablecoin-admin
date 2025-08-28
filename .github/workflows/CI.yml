@@ -1,0 +1,44 @@
+#==========================================================================#
+#  작업내용  : CI / Docker Image Build                                     #
+#  작성일자  : 2025.08.19                                                  #
+#  작 성 자  : 유 승 현                                                    #
+#  특    징  : 1) 해당 브랜치 Push 또는 PR 시 CI/빌드 작업                 #
+#              2) 이미지 Docker 빌드 해서 Test 서버에 로드                 #
+#              3) 소스 디렉토리 최상단에 Dockerfile 사용                   #
+#              4) Dockerfile 내에 소스 빌드 프로세스 포함됨                #
+#  사용변수  :                                                             #
+#==========================================================================#
+name: Build Docker image
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+
+    steps:
+      - name: Project Src Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker Setting Check
+        run: |
+          ls -al
+          sudo docker ps -a
+
+      # Tag : YYMMDD
+      - name: Pre-Enviroment Check - DeployTag Setting
+        run: |
+          echo "DeplyTag=$(date '+%y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: Docker Image Build & Tag
+        run: |
+          sudo docker buildx build -t ${{ vars.REPO_URL }}/${{ vars.CONTAINER_NAME }}:${{ env.DeplyTag }} .
+          sudo docker tag ${{ vars.REPO_URL }}/${{ vars.CONTAINER_NAME }}:${{ env.DeplyTag }}  ${{ vars.REPO_URL }}/${{ vars.CONTAINER_NAME }}:latest
+
+      - name: Docker Image Push
+        run: |          
+          sudo docker push ${{ vars.REPO_URL }}/${{ vars.CONTAINER_NAME }}:latest

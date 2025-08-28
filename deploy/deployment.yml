@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poc-stablecoin-admin
+  namespace: app
+spec:
+  replicas: 1
+#  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app: poc-stablecoin-admin
+  template:
+    metadata:
+      labels:
+        app: poc-stablecoin-admin
+    spec:
+      nodeSelector:
+        role: worker
+#      imagePullSecrets:
+#        - name: gitea-registry-key  # 위에서 생성한 Secret 이름
+      containers:
+      - name: poc-stablecoin-admin
+        image: 172.28.128.142:32000/poc-stablecoin-admin:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+#        envFrom:
+#          - configMapRef:
+#            name:
+#        resources:
+#          limits:
+#            cpu: '1'
+#            memory: 2Gi
+#          requests:
+#            cpu: '1'
+#            memory: 2Gi
+        livenessProbe:                  # 컨테이너가 여전히 실행 중인지 확인.
+          failureThreshold: 3              # 실패 후 Probe를 시도할 횟수를 지정.
+          successThreshold: 1
+          initialDelaySeconds: 30          # Probe가 예약되기 전에 컨테이너가 시작된 후 시간(초) 지정.
+          periodSeconds: 10                # Probe 수행할 시간(초)를 지정. 기본값은 10. timeoutSeconds 보다 커야 함.
+          tcpSocket:                       # 수행할 테스트(여기서는 TCP 소켓 테스트)를 지정
+            port: 3000                     # 컨테이너가 수신 대기 중인 포트를 지정
+          timeoutSeconds: 5                # Probe 기 실패한 것으로 간주되는 비활성 시간(조) 지정. 기본값은 1. 이 값은 periodSeconds 보다 작아야 함
+        readinessProbe:
+          failureThreshold: 3
+          successThreshold: 1
+          initialDelaySeconds: 30
+          periodSeconds: 10
+#          httpGet:                         # 수행할 테스트 유형(여기서는 HTTP 테스트)를 지정..
+#            host: my-host                  # 호스트 IP 주소를 지정. Host 기 정의되지 않는 경우 PodlP 사용.
+#            scheme: HTTPS                  # HTTP 또는 HTTPS 를 지정. Schame가 정의되지 않는 경우 HTTP sheme 사용.
+#            path: /
+          tcpSocket:                       # 수행할 테스트(여기서는 TCP 소켓 테스트)를 지정
+            port: 3000
+          timeoutSeconds: 5
+#        startupProbe:
+#          failureThreshold: 3
+#          successThreshold: 1
+#          initialDelaySeconds: 30
+#          periodSeconds: 10
+#          exec:                          # 수행할 테스트 유형(여기서는 컨데이너 실행 프로브) 지점..
+#            command:                     # 컨테이너에서 실행할 명령을 pod/disc-0지점
+#            - cat
+#            - /data/conf/application.yml
+#          timeoutSeconds: 5
+#        volumeMounts:
+#        - name: config-volume
+#          mountPath: /deployments/conf
+#          readOnly: true
+#        - name: disc-logs
+#          mountPath: /logs
+#        - name: data
+#          mountPath: /deployments/data
+#      volumes:
+#      - name: config-volume
+#        configMap:
+#          name: disc-config
+#      - name: disc-logs
+#        persistentVolumeClaim:
+#          claimName: disc-pvc-log
+#  volumeClaimTemplates:
+#    - apiVersion: v1
+#      kind: PersistentVolumeClaim
+#      metadata:
+#        name: data
+#      spec:
+#        storageClassName: microk8s-hostpath
+#        accessModes:
+#          - "ReadWriteOnce"
+#        resources:
+#          requests:
+#            storage: "1Gi"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
