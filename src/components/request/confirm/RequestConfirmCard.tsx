@@ -1,5 +1,5 @@
 import { formatAmount, formatDateTime } from "@/utils/formater";
-import Modal from "../common/Modal";
+import Modal from "../../common/Modal";
 
 interface RequestConfirmCardProps {
   isOpen: boolean;
@@ -9,6 +9,7 @@ interface RequestConfirmCardProps {
   method: string;
   actionStatus: string;
   handleConfirm: (id: number) => void;
+  confirmLoading?: boolean;
 }
 
 const RequestConfirmCard = ({
@@ -19,6 +20,7 @@ const RequestConfirmCard = ({
   method,
   actionStatus,
   handleConfirm,
+  confirmLoading,
 }: RequestConfirmCardProps) => {
   const { id, requestTokenAmount, reqAt, chain, reqUsrLoginId, mint, redeem } =
     data || {};
@@ -81,8 +83,13 @@ const RequestConfirmCard = ({
             취소
           </button>
           <button
+            disabled={confirmLoading}
             onClick={() => handleConfirm(id)}
-            className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium"
+            className="px-4 py-2 rounded 
+             bg-blue-600 hover:bg-blue-700 
+             disabled:bg-blue-300 
+             disabled:cursor-not-allowed 
+             text-white text-sm font-medium"
           >
             확인
           </button>

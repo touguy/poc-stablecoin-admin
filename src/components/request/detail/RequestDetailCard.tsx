@@ -1,6 +1,6 @@
 // CommonModal.tsx
+import { requestsMintService } from "@/components/services/RequetsMintService";
 import { useEffect, useState } from "react";
-import { requestsMintService } from "../services/RequetsMintService";
 
 interface CommonModalProps {
   requestId: number | null;

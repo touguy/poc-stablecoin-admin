@@ -3,8 +3,8 @@ import { useAuthStore } from "@/stores/authStore";
 import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { useEffect, useState } from "react";
-import RequestConfirmCard from "../../RequestConfirmCard";
-import RequestDetailCard from "../../RequestDetailCard";
+import RequestConfirmCard from "../../confirm/RequestConfirmCard";
+import RequestDetailCard from "../../detail/RequestDetailCard";
 
 const tableHeaders = [
   { key: "trackingRef", label: "거래번호", width: "w-28" },
@@ -26,6 +26,8 @@ export default function MintListTable() {
   const [isOpen, setIsOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [actionStatus, setActionStatus] = useState<"승인" | "거절">("승인");
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
   //검색 관련 상태
   const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
@@ -51,14 +53,18 @@ export default function MintListTable() {
    */
   const handleAction = async (id: number, action: "승인" | "거절") => {
     try {
+      setConfirmLoading(true);
       await requestsMintService.manage({
         userId: Number(user?.id) || 0,
         requestId: id,
         actionStatus: action,
       });
-      alert(`${action} 처리되었습니다.`);
+      confirm(`${action} 처리되었습니다.`);
+      setIsConfirmOpen(false);
+      setConfirmLoading(false);
       mutate();
     } catch {
+      setConfirmLoading(false);
       alert("처리 중 오류가 발생했습니다.");
     }
   };
@@ -216,10 +222,14 @@ export default function MintListTable() {
             method="발행"
             actionStatus={actionStatus}
             title="서명 요청"
-            handleConfirm={() => handleAction(selectedRequestId, actionStatus)}
+            handleConfirm={() => {
+              setIsConfirmOpen(true);
+              handleAction(selectedRequestId, actionStatus);
+            }}
             data={data?.data.items.find(
               (item: any) => item.id === selectedRequestId
             )}
+            confirmLoading={confirmLoading}
           />
         </>
       )}

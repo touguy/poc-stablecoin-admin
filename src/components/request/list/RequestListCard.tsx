@@ -1,6 +1,6 @@
 import { useState } from "react";
-import MintListTable from "./mint/table/MintListTable";
-import RedeemListTable from "./redeem/table/RedeemListTable";
+import MintListTable from "./table/MintListTable";
+import RedeemListTable from "./table/RedeemListTable";
 
 export default function RequestListCard() {
   const [tab, setTab] = useState<"issue" | "refund">("issue");

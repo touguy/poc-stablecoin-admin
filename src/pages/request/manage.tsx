@@ -1,4 +1,4 @@
-import RequestListCard from "@/components/request/RequestListCard";
+import RequestListCard from "@/components/request/list/RequestListCard";
 
 const ManagePage = () => {
   return <RequestListCard />;

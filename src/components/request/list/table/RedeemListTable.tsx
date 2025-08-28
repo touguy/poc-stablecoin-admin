@@ -1,11 +1,10 @@
-import CommonModal from "@/components/request/RequestDetailCard";
 import { requestsRedeemService } from "@/components/services/RequestsRedeemService";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqRedeemListRes } from "@/types/requestsRedeem";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { useEffect, useState } from "react";
-import RequestConfirmCard from "../../RequestConfirmCard";
-import RequestDetailCard from "@/components/request/RequestDetailCard";
+import RequestConfirmCard from "../../confirm/RequestConfirmCard";
+import RequestDetailCard from "../../detail/RequestDetailCard";
 
 const tableHeaders = [
   { key: "trackingRef", label: "거래번호", width: "w-28" },
