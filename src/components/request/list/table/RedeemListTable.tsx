@@ -20,7 +20,7 @@ const tableHeaders = [
   { key: "statusUpdatedAt", label: "승인/거절 일시", width: "w-32" },
 ];
 
-export default function RedeemListTable() {
+const RedeemListTable = () => {
   const { user } = useAuthStore();
 
   //상태 관리
@@ -32,6 +32,8 @@ export default function RedeemListTable() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
+
+  // 목록 조회
   const { data, isLoading, mutate } = requestsRedeemService.useGetList({
     page,
     limit,
@@ -202,7 +204,7 @@ export default function RedeemListTable() {
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
+            // onClose={() => setIsOpen(false)}
             title="트랜잭션 상세"
           />
           <RequestConfirmCard
@@ -221,3 +223,4 @@ export default function RedeemListTable() {
     </>
   );
 }
+export default RedeemListTable;

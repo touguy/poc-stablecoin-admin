@@ -19,7 +19,7 @@ const tableHeaders = [
   { key: "statusUpdatedAt", label: "승인/거절 일시", width: "w-32" },
 ];
 
-export default function MintListTable() {
+const MintListTable = () => {
   const { user } = useAuthStore();
   // 상태 관리
   const [selectedRequestId, setSelectedRequestId] = useState<number>(0);
@@ -204,10 +204,10 @@ export default function MintListTable() {
               )}
             </div>
           </div>
+
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
-            onClose={() => setIsOpen(false)}
             title="트랜잭션 상세"
             explorerUrl={
               data?.data?.items?.find(
@@ -235,4 +235,5 @@ export default function MintListTable() {
       )}
     </>
   );
-}
+};
+export default MintListTable;
