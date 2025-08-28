@@ -25,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
       }
 
       if (isLoggedIn && isPublicPath) {
-        await router.replace("/request-list");
+        await router.replace("/request/manage");
         return;
       }
 

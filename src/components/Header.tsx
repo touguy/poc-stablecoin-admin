@@ -1,6 +1,6 @@
+import { useLogin } from "@/hooks/useLogin";
 import Link from "next/link";
 import ProfileButton from "./ProfileButton";
-import { useLogin } from "@/hooks/useLogin";
 
 const Header = () => {
   //user context에서 account 정보 가져오기
@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <header className="h-16 bg-white border-b px-6 flex items-center justify-between">
       <div className="flex items-center">
-        <Link href="/request-list" className="text-2xl font-bold">
+        <Link href="/request/manage" className="text-2xl font-bold">
           발행관리포털
         </Link>
       </div>
