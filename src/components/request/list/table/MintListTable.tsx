@@ -1,23 +1,11 @@
 import { requestsMintService } from "@/components/services/RequetsMintService";
+import { TABLE_HEADERS } from "@/constants/table/tableHeaders";
 import { useAuthStore } from "@/stores/authStore";
 import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { useEffect, useState } from "react";
 import RequestConfirmCard from "../../confirm/RequestConfirmCard";
 import RequestDetailCard from "../../detail/RequestDetailCard";
-
-const tableHeaders = [
-  { key: "trackingRef", label: "거래번호", width: "w-28" },
-  { key: "transaction", label: "Transaction", width: "w-36" },
-  { key: "chainName", label: "네트워크", width: "w-20" },
-  { key: "reqAt", label: "신청 일시", width: "w-32" },
-  { key: "reqUsrLoginId", label: "신청자 ID", width: "w-16" },
-  { key: "requestTokenAmount", label: "발행신청 수량(KRWH)", width: "w-40" },
-  { key: "mintToAddress", label: "발행 지갑 주소", width: "w-20" },
-  { key: "requestStatus", label: "상태", width: "w-20" },
-  { key: "actions", label: "승인/거절", width: "w-20" },
-  { key: "statusUpdatedAt", label: "승인/거절 일시", width: "w-32" },
-];
 
 const MintListTable = () => {
   const { user } = useAuthStore();
@@ -115,7 +103,7 @@ const MintListTable = () => {
               <table className="min-w-full bg-white rounded shadow border text-sm table-fixed">
                 <thead>
                   <tr className="bg-gray-100">
-                    {tableHeaders.map(({ label, width }) => (
+                    {TABLE_HEADERS.MINT_LIST?.map(({ label, width }) => (
                       <th key={label} className={`p-2 ${width}`}>
                         {label}
                       </th>
