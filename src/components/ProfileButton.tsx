@@ -1,14 +1,16 @@
-import { useRouter } from "next/router";
-import React, { useState } from "react";
+import { useAuthStore } from "@/stores/authStore";
+import { Button, MenuItem, MenuList, Paper, Popper } from "@mui/material";
+import Image from "next/image";
+import React, { useRef, useState } from "react";
 
 interface ProfileButtonProps {
   onLogout: () => void;
 }
 
 const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
+  const {user} = useAuthStore();
   const [open, setOpen] = useState(false);
-  const router = useRouter();
-
+  const anchorRef = useRef<HTMLButtonElement>(null);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(
@@ -24,35 +26,44 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
   const handleLogout = () => {
     setOpen(false);
     onLogout();
-    router.replace("/login");
+  };
+
+  const handleProfile = () => {
+    alert("프로필 기능은 준비 중입니다.");
+  };
+
+  const handleSetting = () => {
+    alert("설정 기능은 준비 중입니다.");
   };
 
   return (
-    <div className="absolute right-24 p-2 rounded hover:bg-gray-100">
-      <button
-        className="px-4 py-2 bg-gray-100 text-black-700 rounded-lg border border-gray-300 hover:bg-gray-200"
-        type="button"
-        onClick={() => setOpen((v) => !v)}
+    <Button data-profilebtn ref={anchorRef} onClick={() => setOpen((v) => !v)}>
+      <Image
+        src="/admin/images/icon_profile.svg"
+        alt="프로필 이미지"
+        width={24}
+        height={24}
+        style={{ width: "2.4rem", height: "2.4rem" }}
+      />
+      {user?.username} ▾
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        placement="bottom-start"
+        transition
+        disablePortal
       >
-        Profile
-      </button>
-      {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
-          <button
-            className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-            onClick={handleCopy}
-          >
-            지갑주소 복사
-          </button>
-          <button
-            className="block w-full px-4 py-2 text-left text-red-500 hover:bg-gray-100"
-            onClick={handleLogout}
-          >
-            로그아웃
-          </button>
-        </div>
-      )}
-    </div>
+        <Paper>
+          <MenuList autoFocusItem={open}>
+            <MenuItem onClick={handleCopy}>지갑주소 복사하기</MenuItem>
+            <MenuItem onClick={handleProfile}>프로필</MenuItem>
+            <MenuItem onClick={handleSetting}>설정</MenuItem>
+            <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
+          </MenuList>
+        </Paper>
+      </Popper>
+    </Button>
   );
 };
 

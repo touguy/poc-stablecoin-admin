@@ -6,7 +6,7 @@ export default function RequestListCard() {
   const [tab, setTab] = useState<"issue" | "refund">("issue");
 
   return (
-    <div className="max-w-7xl mx-auto mt-8 bg-gray-50 rounded shadow">
+    <div>
       <h2 className="text-2xl font-bold p-6 border-b">발행/환불 관리</h2>
       <div className="flex border-b">
         <button

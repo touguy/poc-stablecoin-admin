@@ -1,67 +1,58 @@
+// Sidebar.tsx
 import { menuItems } from "@/constants/menu";
+import { Collapse, List, ListItemButton } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 const Sidebar = () => {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
   const toggleMenu = (title: string) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [title]: !prev[title],
-    }));
+    setOpenMenus((prev) => ({ ...prev, [title]: !prev[title] }));
   };
-  const { pathname } = useRouter();
-  return (
-    <aside className="w-64 h-screen bg-gray-800 text-white p-4">
-      <nav className="space-y-6">
-        {menuItems.map((menu) => (
-          <div key={menu.title}>
-            <h2
-              className={`text-lg font-semibold mb-2 cursor-pointer p-2 rounded flex items-center justify-between ${
-                openMenus[menu.title] ? "bg-gray-700" : "hover:bg-gray-700"
-              }`}
-              onClick={() => menu.children && toggleMenu(menu.title)}
-            >
-              <span>{menu.title}</span>
-              {menu.children && (
-                <span>{openMenus[menu.title] ? "−" : "+"}</span>
-              )}
-            </h2>
 
-            {/* 2Depth 메뉴 */}
-            {menu.children && openMenus[menu.title] && (
-              <div className="space-y-2 pl-4">
-                {menu.children.map((child) => {
-                  const isActive = pathname === child.path;
-                  return child.active ? (
-                    <Link
-                      key={child.path}
-                      href={child.path}
-                      className={`block px-2 py-1 rounded hover:bg-gray-700 ${
-                        isActive
-                          ? "bg-gray-700 font-semibold text-blue-300"
-                          : ""
-                      }`}
-                    >
-                      - {child.title}
-                    </Link>
-                  ) : (
-                    <span
-                      key={child.title}
-                      className="block text-gray-300 cursor-not-allowed"
-                    >
-                      - {child.title}
-                    </span>
-                  );
-                })}
-              </div>
+  return (
+    <List component="nav" data-sidemenu>
+      {menuItems.map((item, index) => {
+        const hasChildren = Array.isArray(item.children);
+        const isOpen = openMenus[item.title] || false;
+        const iconSrc = item.iconSrc;
+
+        return (
+          <>
+            <ListItemButton
+              key={item.title}
+              className={isOpen ? "on" : ""}
+              onClick={() => (hasChildren ? toggleMenu(item.title) : undefined)}
+            >
+              <Image
+                src={iconSrc}
+                alt="아이콘 이미지"
+                width={20}
+                height={20}
+                style={{ width: "2rem", height: "2rem" }}
+              />
+              {item.title}
+            </ListItemButton>
+
+            {hasChildren && (
+              <Collapse in={isOpen} timeout="auto" unmountOnExit>
+                {item?.children?.map((child) => (
+                  <Link
+                    key={child.path}
+                    href={child.path}
+                    className={child.active ? "on" : ""}
+                  >
+                    <span>-</span> {child.title}
+                  </Link>
+                ))}
+              </Collapse>
             )}
-          </div>
-        ))}
-      </nav>
-    </aside>
+          </>
+        );
+      })}
+    </List>
   );
 };
 
