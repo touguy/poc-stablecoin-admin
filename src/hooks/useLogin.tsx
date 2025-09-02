@@ -1,10 +1,14 @@
+import { ADMIN_INFO } from "@/constants/adminInfo";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginReq } from "@/types/auth";
 import { api } from "@/utils/axios";
 import { jwtDecode } from "jwt-decode";
 import { useCallback, useState } from "react";
 
-type LoginRes = { user: { id: string; username: string }; jwt: string };
+type LoginRes = {
+  user: { id: string; username: string; loginId: string; roleId: string };
+  jwt: string;
+};
 interface DecodedToken {
   userid: string;
   address: string;
@@ -23,9 +27,15 @@ export function useLogin() {
 
       try {
         const data = await api.post<LoginRes>("/auth/login", payload);
+        if(data.data.user.roleId !== ADMIN_INFO.ROLE_ID){
+          throw new Error("관리자 계정으로 로그인 해주세요.");
+        }
+
         setUser({
           id: data.data.user.id,
           username: data.data.user.username,
+          loginId: data.data.user.loginId,
+          roleId: data.data.user.roleId,
         });
         // JWT 저장
         localStorage.setItem("token", data.data.jwt);
@@ -62,7 +72,6 @@ export function useLogin() {
       localStorage.removeItem("username");
       localStorage.removeItem("address");
       localStorage.removeItem("auth-storage");
-
     } catch (e: any) {
       const message = e?.message ?? "로그아웃에 실패했습니다.";
       setError(message);

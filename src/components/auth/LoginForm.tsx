@@ -67,17 +67,17 @@ export default function LoginForm() {
             />
           )}
         />
-        {/* {error && (
+        {error && (
           <p
             style={{
               color: "var(--sub-01) !important",
-              marginTop: "2rem",
+              marginTop: "3rem",
               fontSize: "1.2rem",
             }}
           >
             아이디 혹은 비밀번호가 일치하지 않습니다.
           </p>
-        )} */}
+        )}
         <Button type="submit" variant="contained" disabled={loading}>
           로그인
         </Button>
