@@ -1,6 +1,9 @@
 import Layout from "@/components/Layout";
 import { useAuthStore } from "@/stores/authStore";
 import "@/styles/globals.css";
+import "@/styles/globals.scss";
+import theme from "@/theme/index.mjs";
+import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -37,13 +40,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   if (!authChecked) return null; // TODO  로딩 스피너 등으로 대체 가능
 
-  const title = (Component as any).title || "Dashboard";
-
-  return isPublicPath ? (
-    <Component {...pageProps} />
-  ) : (
-    <Layout title={title}>
-      <Component {...pageProps} />
-    </Layout>
+  const isLayout = (Component as any).isLayout ?? true;
+  return (
+    <ThemeProvider theme={theme}>
+      <Layout isLayout={isLayout}>
+        <Component {...pageProps} />
+      </Layout>
+    </ThemeProvider>
   );
 }

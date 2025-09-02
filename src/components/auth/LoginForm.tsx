@@ -1,6 +1,8 @@
 import { useLogin } from "@/hooks/useLogin";
+import { Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import MuiTextField from "../common/MuiTextField";
 
 export interface LoginFormType {
   loginId: string;
@@ -12,7 +14,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormType>();
@@ -27,41 +29,59 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-sm space-y-3">
-      <div>
-        <label className="block text-sm font-medium">아이디</label>
-        <input
-          className="mt-1 w-full rounded border p-2"
-          {...register("loginId", { required: "입력한 아아디가 없습니다." })}
-          placeholder="아이디 입력"
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box data-login>
+        <Typography variant="h1">발행관리포털</Typography>
+        <Typography sx={{ mt: "2rem", mb: "4rem" }}>
+          아이디와 비밀번호를 입력해주세요.
+        </Typography>
+
+        <Controller
+          name="loginId"
+          control={control}
+          rules={{ required: "*입력한 아이디가 없습니다." }}
+          render={({ field }) => (
+            <MuiTextField
+              {...field}
+              placeholder="아이디를 입력해주세요."
+              id="login-id"
+              sx={{ mb: "4rem" }}
+              error={!!errors.loginId}
+              helperText={errors.loginId?.message}
+            />
+          )}
         />
-        {errors.loginId && (
-          <p className="text-red-600 text-sm">{errors.loginId.message}</p>
-        )}
-      </div>
 
-      <div>
-        <label className="block text-sm font-medium">비밀번호</label>
-        <input
-          className="mt-1 w-full rounded border p-2"
-          {...register("password", { required: "입력한 비밀번호가 없습니다." })}
-          placeholder="비밀번호 입력"
-          type="password"
+        <Controller
+          name="password"
+          control={control}
+          rules={{ required: "*입력한 비밀번호가 없습니다." }}
+          render={({ field }) => (
+            <MuiTextField
+              {...field}
+              placeholder="비밀번호를 입력해주세요."
+              id="login-password"
+              type="password"
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+          )}
         />
-        {errors.password && (
-          <p className="text-red-600 text-sm">{errors.password.message}</p>
-        )}
-      </div>
-
-      {error && <p className="text-red-600 text-sm">아이디 혹은 비밀번호가 일치하지 않습니다.</p>}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full rounded bg-black p-2 text-white disabled:opacity-60"
-      >
-        {loading ? "Signing in…" : "로그인"}
-      </button>
+        {/* {error && (
+          <p
+            style={{
+              color: "var(--sub-01) !important",
+              marginTop: "2rem",
+              fontSize: "1.2rem",
+            }}
+          >
+            아이디 혹은 비밀번호가 일치하지 않습니다.
+          </p>
+        )} */}
+        <Button type="submit" variant="contained" disabled={loading}>
+          로그인
+        </Button>
+      </Box>
     </form>
   );
 }
