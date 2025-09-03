@@ -3,7 +3,7 @@ import { menuItems } from "@/constants/menu";
 import { Collapse, List, ListItemButton } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 const Sidebar = () => {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
@@ -14,15 +14,14 @@ const Sidebar = () => {
 
   return (
     <List component="nav" data-sidemenu>
-      {menuItems.map((item, index) => {
+      {menuItems.map((item) => {
         const hasChildren = Array.isArray(item.children);
         const isOpen = openMenus[item.title] || false;
         const iconSrc = item.iconSrc;
 
         return (
-          <>
+          <Fragment key={item.title}>
             <ListItemButton
-              key={item.title}
               className={isOpen ? "on" : ""}
               onClick={() => (hasChildren ? toggleMenu(item.title) : undefined)}
             >
@@ -42,14 +41,19 @@ const Sidebar = () => {
                   <Link
                     key={child.path}
                     href={child.path}
-                    className={child.active ? "on" : ""}
+                    onClick={(e) => {
+                      if (!child.active) {
+                        e.preventDefault(); // 링크 이동 방지
+                      }
+                    }}
+                    className={child.active ? "on" : "disabled-link"}
                   >
                     <span>-</span> {child.title}
                   </Link>
                 ))}
               </Collapse>
             )}
-          </>
+          </Fragment>
         );
       })}
     </List>
