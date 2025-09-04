@@ -1,6 +1,5 @@
 import Layout from "@/components/Layout";
 import { useAuthStore } from "@/stores/authStore";
-import "@/styles/globals.css";
 import "@/styles/globals.scss";
 import theme from "@/theme/index.mjs";
 import { ThemeProvider } from "@mui/material/styles";
