@@ -22,7 +22,7 @@ const RequestConfirmCard = ({
   handleConfirm,
   confirmLoading,
 }: RequestConfirmCardProps) => {
-  const { id, requestTokenAmount, reqAt, chain, reqUsrLoginId, mint, redeem } =
+  const { id, trackingRef, requestTokenAmount, reqAt, chain, reqUsrLoginId, mint, redeem } =
     data || {};
 
   return (
@@ -36,7 +36,7 @@ const RequestConfirmCard = ({
         <div className="border border-gray-200 rounded-md">
           <table className="w-full text-sm text-left text-gray-700">
             <tbody>
-              <InfoRow label="거래 번호" value={id} />
+              <InfoRow label="거래 번호" value={trackingRef} />
               <InfoRow
                 label={`${method} 신청 수량`}
                 value={formatAmount(requestTokenAmount)}
