@@ -32,8 +32,17 @@ const MintListTable = () => {
    * 트랜잭션 상세 모달
    */
   const handleTxDetail = (id: number) => {
-    setSelectedRequestId(id);
-    setIsOpen(true);
+    if (selectedRequestId === id) {
+      setIsOpen(false);
+      setSelectedRequestId(0); // 초기화
+      setTimeout(() => {
+        setSelectedRequestId(id);
+        setIsOpen(true);
+      }, 50);
+    } else {
+      setSelectedRequestId(id);
+      setIsOpen(true);
+    }
   };
 
   /**
