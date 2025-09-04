@@ -1,11 +1,38 @@
-import type { NextPage } from 'next';
+import { Button, Container, Typography } from "@mui/material";
+import type { NextPage } from "next";
+import Link from "next/link";
 
-const Custom404: NextPage = () => {
+const Custom404: NextPage & { isLayout?: boolean } = () => {
   return (
-    <>
-      <div>404 - 페이지를 찾을 수 없습니다</div>
-    </>
+    <Container
+      maxWidth="sm"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        textAlign: "center",
+      }}
+    >
+      <Typography variant="h1" color="primary" gutterBottom>
+        404
+      </Typography>
+      <Typography variant="h5" gutterBottom>
+        페이지를 찾을 수 없습니다
+      </Typography>
+      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
+        요청하신 페이지가 존재하지 않거나, 이동되었을 수 있어요.
+      </Typography>
+      <Link href="/" passHref>
+        <Button variant="contained" color="primary">
+          홈으로 돌아가기
+        </Button>
+      </Link>
+    </Container>
   );
 };
+
+Custom404.isLayout = false;
 
 export default Custom404;
