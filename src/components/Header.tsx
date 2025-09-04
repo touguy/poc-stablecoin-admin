@@ -1,7 +1,7 @@
+import { useLogin } from "@/hooks/useLogin";
 import { AppBar, Badge, Button, Typography } from "@mui/material";
 import Link from "next/link";
 import ProfileButton from "./ProfileButton";
-import { useLogin } from "@/hooks/useLogin";
 
 const Header = () => {
   // 햄버거 버튼 클릭 시 (예시: alert)
@@ -14,7 +14,7 @@ const Header = () => {
   return (
     <AppBar data-header>
       <Typography variant="h1">
-        <Link href="/">발행관리포털</Link>
+        <Link href="/request/manage">발행관리포털</Link>
       </Typography>
 
       <ProfileButton onLogout={logout} />
