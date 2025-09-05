@@ -213,7 +213,7 @@ header.MuiAppBar-root[data-header] {
         content: '';
         width: 2rem;
         height: 2rem;
-        background: url('/user/images/icon_logo.svg') no-repeat;
+        background: url('/admin/images/icon_logo.svg') no-repeat;
         background-size: 100%;
       }
     }
@@ -223,7 +223,7 @@ header.MuiAppBar-root[data-header] {
     display: block;
     width: 2.4rem;
     height: 2.4rem;
-    background: url('/user/images/icon_alram.svg') no-repeat center;
+    background: url('/admin/images/icon_alram.svg') no-repeat center;
 
     >span {
       display: block;
@@ -244,7 +244,7 @@ header.MuiAppBar-root[data-header] {
     overflow: hidden;
 
     &[data-menubtn] {
-      background: url('/user/images/icon_menu.svg') no-repeat center;
+      background: url('/admin/images/icon_menu.svg') no-repeat center;
     }
 
     &[data-profilebtn] {
@@ -470,7 +470,7 @@ div[data-login] {
       content: '';
       width: 2.4rem;
       height: 2.4rem;
-      background: url('/user/images/icon_logo.svg') no-repeat;
+      background: url('/admin/images/icon_logo.svg') no-repeat;
       background-size: 100%;
     }
   }
@@ -585,7 +585,7 @@ div[data-result-grid] {
               display: block;
               width: 4rem;
               height: 4rem;
-              background: url(/user/images/icon_circle.svg) no-repeat;
+              background: url(/admin/images/icon_circle.svg) no-repeat;
             }
           }
         }
@@ -737,7 +737,7 @@ div[data-popup] {
           overflow: hidden;
           text-indent: -99rem;
           border: 0;
-          background: url(/user/images/close_icon_24.svg) no-repeat;
+          background: url(/admin/images/close_icon_24.svg) no-repeat;
           cursor: pointer;
         }
       }
@@ -980,7 +980,7 @@ div[data-wallet-address] {
     height: 2rem;
     text-indent: -99rem;
     overflow: hidden;
-    background: url(/user/images/icon_copy.svg) no-repeat center;
+    background: url(/admin/images/icon_copy.svg) no-repeat center;
   }
 }
 
