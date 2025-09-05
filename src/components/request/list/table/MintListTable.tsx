@@ -1,46 +1,73 @@
+import {
+  ApprovalButtonsCell,
+  NetworkCell,
+  StatusCell,
+  TransactionCell,
+  WalletAddressCell,
+} from "@/components/common/MuiDataGridCells";
 import { requestsMintService } from "@/components/services/RequetsMintService";
-import { TABLE_HEADERS } from "@/constants/table/tableHeaders";
 import { useAuthStore } from "@/stores/authStore";
-import { SearchReqMintListRes } from "@/types/requestsMint";
 import { formatAmount, formatDateTime } from "@/utils/formater";
-import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import { GridColDef } from "@mui/x-data-grid";
+import { useState } from "react";
+import MuiDataGrid from "../../../common/MuiDataGrid";
 import RequestConfirmCard from "../../confirm/RequestConfirmCard";
 import RequestDetailCard from "../../detail/RequestDetailCard";
 
-const MintListTable = () => {
+type MintListTableProps = {
+  data: any;
+  isLoading: boolean;
+  mutate: () => void;
+  page: number;
+  setPage: (page: number) => void;
+  limit: number;
+  setLimit: (limit: number) => void;
+};
+
+const MintListTable = ({
+  data,
+  isLoading,
+  mutate,
+  page,
+  setPage,
+  limit,
+  setLimit,
+}: MintListTableProps) => {
+  // 로그인 사용자 정보
   const { user } = useAuthStore();
+
   // 상태 관리
-  const [selectedRequestId, setSelectedRequestId] = useState<number>(0);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [actionStatus, setActionStatus] = useState<"승인" | "거절">("승인");
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState<number>(0); // 선택된 요청 ID
+  const [isOpen, setIsOpen] = useState(false); // 트랜잭션 상세 모달
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false); // 승인/거절 모달
+  const [actionStatus, setActionStatus] = useState<string>("승인"); // 승인/거절 상태
+  const [confirmLoading, setConfirmLoading] = useState(false); // 승인/거절 처리 중 로딩
+  const [openApprovalPopup, setOpenApprovalPopup] = useState(false);
 
-  //검색 관련 상태
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
+  // 테이블 관리
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
-  // 목록 조회
-  const { data, isLoading, mutate } = requestsMintService.useGetList({
-    page,
-    limit,
-    search: searchKeyword,
-  });
+  const handlePageSizeChange = (newPageSize: number) => {
+    setLimit(newPageSize);
+    setPage(0);
+  };
 
   /**
    * 트랜잭션 상세 모달
    */
-  const handleTxDetail = (id: number) => {
-    if (selectedRequestId === id) {
+  const handleTransactionClick = (row: any) => {
+    if (selectedRequestId === row.id) {
       setIsOpen(false);
       setSelectedRequestId(0); // 초기화
       setTimeout(() => {
-        setSelectedRequestId(id);
+        setSelectedRequestId(row.id);
         setIsOpen(true);
       }, 50);
     } else {
-      setSelectedRequestId(id);
+      setSelectedRequestId(row.id);
       setIsOpen(true);
     }
   };
@@ -48,7 +75,7 @@ const MintListTable = () => {
   /**
    * 발행 승인/거절
    */
-  const handleAction = async (id: number, action: "승인" | "거절") => {
+  const handleAction = async (id: number, action: string) => {
     try {
       setConfirmLoading(true);
       await requestsMintService.manage({
@@ -66,9 +93,115 @@ const MintListTable = () => {
     }
   };
 
-  useEffect(() => {
-    mutate();
-  }, [page, limit]);
+  const handleApprovalClick = (row: any, value: string) => {
+    console.log(value);
+    setSelectedRequestId(row.id);
+    setActionStatus(value);
+    setOpenApprovalPopup(true);
+    let title = "";
+    let list = [];
+    if (value === "승인") {
+     
+      list = [
+        { label: "거래번호", value: "MNT-12" },
+        { label: "발행신청 수량", value: "<span>10,000,000</span> KRWH" },
+        { label: "신청일시", value: "YYYY.MM.DD HH:MM:SS" },
+        { label: "네트워크", value: "Polygon Amoy" },
+        { label: "신청자 ID", value: "ECDjijv223" },
+        {
+          label: "발행 지갑주소",
+          value: "0xdeidjklasdfjl12FFFkjsdlfijselkajsdflkjalskdjflk222",
+        },
+      ];
+    } else {
+      title =
+        "<span>10,000,000</span> 코인<br/><span class='decrease'>발행을 거절</span>합니다.";
+      list = [
+        { label: "거래번호", value: "MNT-12" },
+        { label: "발행신청 수량", value: "<span>10,000,000</span> KRWH" },
+        { label: "신청일시", value: "YYYY.MM.DD HH:MM:SS" },
+        { label: "네트워크", value: "Polygon Amoy" },
+        { label: "신청자 ID", value: "ECDjijv223" },
+        {
+          label: "발행 지갑주소",
+          value: "0xdeidjklasdfjl12FFFkjsdlfijselkajsdflkjalskdjflk222",
+        },
+      ];
+    }
+  };
+
+  const columns: GridColDef[] = [
+    { field: "transactionId", headerName: "거래번호", width: 120 },
+    {
+      field: "transaction",
+      headerName: "Transaction",
+      width: 150,
+      align: "center",
+      sortable: false,
+      filterable: false,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <TransactionCell row={params.row} click={handleTransactionClick} />
+      ),
+    },
+    {
+      field: "network",
+      headerName: "네트워크",
+      width: 150,
+      renderCell: (params) => <NetworkCell value={params.value} />,
+    },
+    { field: "applicationDateTime", headerName: "신청 일시", width: 170 },
+    { field: "applicantId", headerName: "신청자 ID", width: 130 },
+    {
+      field: "requestedIssueCount",
+      headerName: "발행 신청 수량(KRWH)",
+      width: 170,
+      align: "right",
+    },
+    {
+      field: "issuedWalletAddress",
+      headerName: "발행 지갑 주소",
+      minWidth: 180,
+      flex: 1,
+      renderCell: (params) => <WalletAddressCell value={params.value} />,
+    },
+    {
+      field: "status",
+      headerName: "상태",
+      width: 110,
+      cellClassName: "status-cell",
+      headerAlign: "center",
+      renderCell: (params) => <StatusCell value={params.value} />,
+    },
+    {
+      field: "approvalStatus",
+      headerName: "승인/거절",
+      width: 180,
+      sortable: false,
+      filterable: false,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <ApprovalButtonsCell row={params.row} click={handleApprovalClick} />
+      ),
+    },
+    { field: "approvalDateTime", headerName: "승인/거절 일시", width: 180 },
+  ];
+
+  const rows = data?.data?.items.map((item: any) => ({
+    id: item.id,
+    transactionId: item.trackingRef,
+    transaction: item,
+    network: item.chain.chainName,
+    applicationDateTime: formatDateTime(item.reqAt),
+    applicantId: item.reqUsrLoginId,
+    requestedIssueCount: formatAmount(item.requestTokenAmount),
+    issuedWalletAddress: item.mint.mintToAddress,
+    status: item.requestStatus,
+    approvalDateTime:
+      item.requestStatus === "대기중"
+        ? ""
+        : formatDateTime(item.statusUpdatedAt),
+  }));
 
   return (
     <>
@@ -76,135 +209,23 @@ const MintListTable = () => {
         <p className="text-gray-500">데이터 불러오는 중...</p>
       ) : (
         <>
-          <div className="p-4">
-            <h3 className="text-lg font-semibold mb-2">발행 신청내역</h3>
-            <input
-              className="border px-2 py-1 rounded"
-              placeholder="검색"
-              value={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
+          <Box sx={{ mt: "1.2rem" }}>
+            <MuiDataGrid
+              rows={rows}
+              columns={columns}
+              page={page}
+              limit={limit}
+              total={data?.data.meta.totalItems || 0}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+              loading={isLoading}
             />
-            <button
-              className="ml-2 px-3 py-1 border bg-gray-100 rounded hover:bg-gray-200 text-sm"
-              onClick={() => {
-                setPage(1); // 검색 시 페이지 초기화
-                mutate();
-              }}
-            >
-              검색
-            </button>
-            <div>
-              <label className="mr-2 text-sm">페이지당 항목:</label>
-              <select
-                className="border px-2 py-1 rounded text-sm"
-                value={limit}
-                onChange={(e) => {
-                  setPage(1); // 페이지 초기화
-                  setLimit(Number(e.target.value));
-                }}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={15}>15</option>
-              </select>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white rounded shadow border text-sm table-fixed">
-                <thead>
-                  <tr className="bg-gray-100">
-                    {TABLE_HEADERS.MINT_LIST?.map(({ label, width }) => (
-                      <th key={label} className={`p-2 ${width}`}>
-                        {label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {data?.data.items.map((row: SearchReqMintListRes) => (
-                    <tr key={row.id} className="border-t text-center">
-                      <td className="p-2">{row.trackingRef}</td>
-                      <td className="p-2">
-                        <button
-                          className="text-blue-600 underline"
-                          onClick={() => handleTxDetail(row.id)}
-                        >
-                          상세보기
-                        </button>
-                      </td>
-                      <td className="p-2">{row.chain.chainName}</td>
-                      <td className="p-2">{formatDateTime(row.reqAt)}</td>
-                      <td className="p-2">{row.reqUsrLoginId}</td>
-                      <td className="p-2">
-                        {formatAmount(row.requestTokenAmount)}
-                      </td>
-                      <td className="p-2">{row.mint.mintToAddress}</td>
-                      <td className="p-2">{row.requestStatus}</td>
-                      <td className="p-2">
-                        {row.requestStatus === "대기중" ? (
-                          <>
-                            <button
-                              className="text-green-600 mr-2"
-                              onClick={() => {
-                                setSelectedRequestId(row.id);
-                                setActionStatus("승인");
-                                setIsConfirmOpen(true);
-                              }}
-                            >
-                              승인
-                            </button>
-                            <button
-                              onClick={() => {
-                                setSelectedRequestId(row.id);
-                                setActionStatus("거절");
-                                setIsConfirmOpen(true);
-                              }}
-                              className="text-red-600"
-                            >
-                              거절
-                            </button>
-                          </>
-                        ) : (
-                          ""
-                        )}
-                      </td>
-                      <td className="p-2">
-                        {row.requestStatus === "대기중"
-                          ? ""
-                          : formatDateTime(row.statusUpdatedAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex justify-center mt-4 space-x-2">
-              {Array.from(
-                { length: data?.data.meta.totalPages || 1 },
-                (_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => {
-                        setPage(pageNum);
-                      }}
-                      className={`px-3 py-1 border rounded ${
-                        page === pageNum
-                          ? "bg-blue-500 text-white"
-                          : "bg-white text-blue-500"
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                }
-              )}
-            </div>
-          </div>
+          </Box>
 
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
+            method="발행"
             title="트랜잭션 상세"
             explorerUrl={
               data?.data?.items?.find(
@@ -214,11 +235,11 @@ const MintListTable = () => {
           />
 
           <RequestConfirmCard
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
+            openApprovalPopup={openApprovalPopup}
+            setOpenApprovalPopup={setOpenApprovalPopup}
             method="발행"
-            actionStatus={actionStatus}
             title="서명 요청"
+            actionStatus={actionStatus}
             handleConfirm={() => {
               setIsConfirmOpen(true);
               handleAction(selectedRequestId, actionStatus);
