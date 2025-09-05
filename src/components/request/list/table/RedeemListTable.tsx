@@ -14,6 +14,7 @@ import { useState } from "react";
 import MuiDataGrid from "../../../common/MuiDataGrid";
 import RequestConfirmCard from "../../confirm/RequestConfirmCard";
 import RequestDetailCard from "../../detail/RequestDetailCard";
+import { useApproval } from "@/hooks/useApproval";
 
 type RedeemListTableProps = {
   data: any;
@@ -40,9 +41,20 @@ const RedeemListTable = ({
   // 상태 관리
   const [selectedRequestId, setSelectedRequestId] = useState<number>(0); // 선택된 요청 ID
   const [isOpen, setIsOpen] = useState(false); // 트랜잭션 상세 모달
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false); // 승인/거절 모달
-  const [actionStatus, setActionStatus] = useState<string>("승인"); // 승인/거절 상태
-  const [confirmLoading, setConfirmLoading] = useState(false); // 승인/거절 처리 중 로딩
+
+  // 승인/거절 훅
+  const {
+    confirmLoading,
+    openApprovalPopup,
+    setOpenApprovalPopup,
+    actionStatus,
+    setActionStatus,
+    handleAction,
+  } = useApproval({
+    userId: Number(user?.id),
+    service: requestsRedeemService,
+    mutate,
+  });
 
   // 테이블 관리
   const handlePageChange = (newPage: number) => {
@@ -143,30 +155,10 @@ const RedeemListTable = ({
     }
   };
 
-  /**
-   * 환불 승인/거절
-   */
-  const handleAction = async (id: number, action: string) => {
-    try {
-      await requestsRedeemService.manage({
-        userId: Number(user?.id) || 0,
-        requestId: id,
-        actionStatus: action,
-      });
-      alert(`${action} 처리되었습니다.`);
-      setIsConfirmOpen(false);
-      setConfirmLoading(false);
-      mutate();
-    } catch {
-      setConfirmLoading(false);
-      alert("처리 중 오류가 발생했습니다.");
-    }
-  };
-
   const handleApprovalClick = (row: any, value: string) => {
     setSelectedRequestId(row.id);
-    setActionStatus(value);
-    setIsConfirmOpen(true);
+    setActionStatus(value); // "승인" or "거절"
+    setOpenApprovalPopup(true);
   };
 
   return (
@@ -201,13 +193,12 @@ const RedeemListTable = ({
           />
 
           <RequestConfirmCard
-            isOpen={isConfirmOpen}
-            onClose={() => setIsConfirmOpen(false)}
+            openApprovalPopup={openApprovalPopup}
+            setOpenApprovalPopup={setOpenApprovalPopup}
             method="환불"
             title="서명 요청"
             actionStatus={actionStatus}
             handleConfirm={() => {
-              setIsConfirmOpen(true);
               handleAction(selectedRequestId, actionStatus);
             }}
             data={data?.data.items.find(

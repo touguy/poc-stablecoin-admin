@@ -6,6 +6,7 @@ import {
   WalletAddressCell,
 } from "@/components/common/MuiDataGridCells";
 import { requestsMintService } from "@/components/services/RequetsMintService";
+import { useApproval } from "@/hooks/useApproval";
 import { useAuthStore } from "@/stores/authStore";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { Box } from "@mui/material";
@@ -40,10 +41,20 @@ const MintListTable = ({
   // 상태 관리
   const [selectedRequestId, setSelectedRequestId] = useState<number>(0); // 선택된 요청 ID
   const [isOpen, setIsOpen] = useState(false); // 트랜잭션 상세 모달
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false); // 승인/거절 모달
-  const [actionStatus, setActionStatus] = useState<string>("승인"); // 승인/거절 상태
-  const [confirmLoading, setConfirmLoading] = useState(false); // 승인/거절 처리 중 로딩
-  const [openApprovalPopup, setOpenApprovalPopup] = useState(false);
+
+  // 승인/거절 훅
+  const {
+    confirmLoading,
+    openApprovalPopup,
+    setOpenApprovalPopup,
+    actionStatus,
+    setActionStatus,
+    handleAction,
+  } = useApproval({
+    userId: Number(user?.id),
+    service: requestsMintService,
+    mutate,
+  });
 
   // 테이블 관리
   const handlePageChange = (newPage: number) => {
@@ -72,62 +83,10 @@ const MintListTable = ({
     }
   };
 
-  /**
-   * 발행 승인/거절
-   */
-  const handleAction = async (id: number, action: string) => {
-    try {
-      setConfirmLoading(true);
-      await requestsMintService.manage({
-        userId: Number(user?.id) || 0,
-        requestId: id,
-        actionStatus: action,
-      });
-      confirm(`${action} 처리되었습니다.`);
-      setIsConfirmOpen(false);
-      setConfirmLoading(false);
-      mutate();
-    } catch {
-      setConfirmLoading(false);
-      alert("처리 중 오류가 발생했습니다.");
-    }
-  };
-
   const handleApprovalClick = (row: any, value: string) => {
-    console.log(value);
     setSelectedRequestId(row.id);
-    setActionStatus(value);
+    setActionStatus(value); // "승인" or "거절"
     setOpenApprovalPopup(true);
-    let title = "";
-    let list = [];
-    if (value === "승인") {
-     
-      list = [
-        { label: "거래번호", value: "MNT-12" },
-        { label: "발행신청 수량", value: "<span>10,000,000</span> KRWH" },
-        { label: "신청일시", value: "YYYY.MM.DD HH:MM:SS" },
-        { label: "네트워크", value: "Polygon Amoy" },
-        { label: "신청자 ID", value: "ECDjijv223" },
-        {
-          label: "발행 지갑주소",
-          value: "0xdeidjklasdfjl12FFFkjsdlfijselkajsdflkjalskdjflk222",
-        },
-      ];
-    } else {
-      title =
-        "<span>10,000,000</span> 코인<br/><span class='decrease'>발행을 거절</span>합니다.";
-      list = [
-        { label: "거래번호", value: "MNT-12" },
-        { label: "발행신청 수량", value: "<span>10,000,000</span> KRWH" },
-        { label: "신청일시", value: "YYYY.MM.DD HH:MM:SS" },
-        { label: "네트워크", value: "Polygon Amoy" },
-        { label: "신청자 ID", value: "ECDjijv223" },
-        {
-          label: "발행 지갑주소",
-          value: "0xdeidjklasdfjl12FFFkjsdlfijselkajsdflkjalskdjflk222",
-        },
-      ];
-    }
   };
 
   const columns: GridColDef[] = [
@@ -241,7 +200,6 @@ const MintListTable = ({
             title="서명 요청"
             actionStatus={actionStatus}
             handleConfirm={() => {
-              setIsConfirmOpen(true);
               handleAction(selectedRequestId, actionStatus);
             }}
             data={data?.data.items.find(
