@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { showAlert } from "./useAlert";
 
 export const useApproval = ({
   userId,
+  method,
   service,
   mutate,
 }: {
   userId: number;
+  method: string;
   service: any;
   mutate: () => void;
 }) => {
@@ -17,11 +20,19 @@ export const useApproval = ({
     try {
       setConfirmLoading(true);
       await service.manage({ userId, requestId: id, actionStatus: action });
-      alert(`${action} 처리되었습니다.`);
+      showAlert({
+        message: (
+          <>
+            {method} {action}이 완료되었습니다.
+          </>
+        ),
+      });
       setOpenApprovalPopup(false);
       mutate();
     } catch {
-      alert("처리 중 오류가 발생했습니다.");
+      showAlert({
+        message: <>처리 중 오류가 발생했습니다. 다시 시도해주세요.</>,
+      });
     } finally {
       setConfirmLoading(false);
     }
