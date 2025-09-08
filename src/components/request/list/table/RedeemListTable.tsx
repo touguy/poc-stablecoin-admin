@@ -6,6 +6,7 @@ import {
   WalletAddressCell,
 } from "@/components/common/MuiDataGridCells";
 import { requestsRedeemService } from "@/components/services/RequestsRedeemService";
+import { useApproval } from "@/hooks/useApproval";
 import { useAuthStore } from "@/stores/authStore";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { Box } from "@mui/material";
@@ -14,7 +15,6 @@ import { useState } from "react";
 import MuiDataGrid from "../../../common/MuiDataGrid";
 import RequestConfirmCard from "../../confirm/RequestConfirmCard";
 import RequestDetailCard from "../../detail/RequestDetailCard";
-import { useApproval } from "@/hooks/useApproval";
 
 type RedeemListTableProps = {
   data: any;
@@ -52,6 +52,7 @@ const RedeemListTable = ({
     handleAction,
   } = useApproval({
     userId: Number(user?.id),
+    method: "환불",
     service: requestsRedeemService,
     mutate,
   });
@@ -183,7 +184,7 @@ const RedeemListTable = ({
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
-            title="트랜잭션 상세"
+            setIsOpen={setIsOpen}
             explorerUrl={
               data?.data?.items?.find(
                 (item: any) => item.id === selectedRequestId
@@ -204,6 +205,7 @@ const RedeemListTable = ({
             data={data?.data.items.find(
               (item: any) => item.id === selectedRequestId
             )}
+            confirmLoading={confirmLoading}
           />
         </>
       )}

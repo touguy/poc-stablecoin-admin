@@ -9,7 +9,7 @@ import { requestsMintService } from "@/components/services/RequetsMintService";
 import { useApproval } from "@/hooks/useApproval";
 import { useAuthStore } from "@/stores/authStore";
 import { formatAmount, formatDateTime } from "@/utils/formater";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 import MuiDataGrid from "../../../common/MuiDataGrid";
@@ -52,6 +52,7 @@ const MintListTable = ({
     handleAction,
   } = useApproval({
     userId: Number(user?.id),
+    method: "발행",
     service: requestsMintService,
     mutate,
   });
@@ -88,6 +89,8 @@ const MintListTable = ({
     setActionStatus(value); // "승인" or "거절"
     setOpenApprovalPopup(true);
   };
+
+  const [loading, setLoading] = useState(false);
 
   const columns: GridColDef[] = [
     { field: "transactionId", headerName: "거래번호", width: 120 },
@@ -184,8 +187,8 @@ const MintListTable = ({
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
+            setIsOpen={setIsOpen}
             method="발행"
-            title="트랜잭션 상세"
             explorerUrl={
               data?.data?.items?.find(
                 (item: any) => item.id === selectedRequestId

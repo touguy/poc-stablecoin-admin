@@ -14,19 +14,18 @@ import { requestsRedeemService } from "../../services/RequestsRedeemService";
 interface CommonModalProps {
   requestId: number | null;
   isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
   method: string;
-  title?: string;
   explorerUrl: string;
 }
 const RequestDetailCard = ({
   requestId,
   isOpen,
+  setIsOpen,
   method,
-  title,
   explorerUrl,
 }: CommonModalProps) => {
   const [txData, setTxData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +40,6 @@ const RequestDetailCard = ({
         }
 
         setTxData(res.data);
-        setLoading(false);
       } catch (err) {
         console.error("상세 정보 조회 실패:", err);
       }
@@ -53,7 +51,7 @@ const RequestDetailCard = ({
   // 모달 닫음
   const handleTransactionClosePopup = () => {
     setTxData(null);
-    setLoading(true);
+    setIsOpen(false);
   };
 
   const transactionColumns: GridColDef[] = [
@@ -97,7 +95,7 @@ const RequestDetailCard = ({
 
   return (
     <Popup
-      open={!loading}
+      open={isOpen}
       onClose={handleTransactionClosePopup}
       title="Transaction 상세"
     >
