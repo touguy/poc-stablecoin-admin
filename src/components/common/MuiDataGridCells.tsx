@@ -153,7 +153,7 @@ export function TransactionHashCell({
       <Typography>
         {" "}
         <a
-          href={explorerUrl}
+          href={`${explorerUrl}/tx/${value}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: "var(--main-02)", textDecoration: "underline" }}
