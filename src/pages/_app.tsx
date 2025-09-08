@@ -13,6 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const isLoggedIn = useAuthStore((state) => state.isAuthenticated);
   const [authChecked, setAuthChecked] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const isPublicPath = useMemo(
     () => publicPaths.includes(router.asPath.split("?")[0]),
@@ -20,6 +21,12 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
     const handleAuth = async () => {
       if (!isLoggedIn && !isPublicPath) {
         await router.replace("/login");
@@ -35,7 +42,7 @@ export default function App({ Component, pageProps }: AppProps) {
     };
 
     handleAuth();
-  }, [router.asPath, isLoggedIn, isPublicPath]);
+  }, [hydrated, router.asPath, isLoggedIn, isPublicPath]);
 
   if (!authChecked) return null; // TODO  로딩 스피너 등으로 대체 가능
 
