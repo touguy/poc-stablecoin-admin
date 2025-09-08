@@ -22,8 +22,6 @@ export default function ResultGridBox<T extends GridValidRowModel>({
   rows,
   columns,
 }: ResultGridBoxProps<T>) {
-
-  console.log(rows);
   return (
     <Box data-result-grid>
       <DataGrid

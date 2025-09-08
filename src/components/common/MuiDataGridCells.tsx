@@ -80,7 +80,7 @@ export function ApprovalButtonsCell({
 
 export function NetworkCell({ value }: { value: string }) {
   const CHAINS: Record<string, React.ReactNode> = {
-    POL: (
+    "polygon-amoy": (
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
         <circle cx="16" cy="16" r="16" fill="#8247E5" />
         <path
@@ -156,7 +156,7 @@ export function TransactionHashCell({
           href={explorerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ color: "#1e88e5", textDecoration: "underline" }}
+          style={{ color: "var(--main-02)", textDecoration: "underline" }}
         >
           {value}
         </a>

@@ -1,10 +1,10 @@
 import {
-  Box,
-  Container
+    Box,
+    Container
 } from '@mui/material';
 import { ReactNode } from 'react';
-import Header from './Header';
-import Sidebar from './Sidebar';
+import Header from './common/Header';
+import Sidebar from './common/Sidebar';
 
 type Props = {
   children: ReactNode;
