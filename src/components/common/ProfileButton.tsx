@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 interface ProfileButtonProps {
   onLogout: () => void;
@@ -19,20 +20,6 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
   const [open, setOpen] = useState(false);
   const { user } = useAuthStore();
   const anchorRef = useRef<HTMLButtonElement>(null);
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        localStorage.getItem("address") || ""
-      );
-      showAlert({
-        message: <>지갑주소가 복사되었습니다.</>,
-      });
-    } catch {
-      showAlert({
-        message: <>복사에 실패했습니다.</>,
-      });
-    }
-  };
 
   const handleLogout = async () => {
     const ok = await showAlert({
@@ -76,7 +63,16 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({ onLogout }) => {
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <Paper>
             <MenuList autoFocusItem={open}>
-              <MenuItem onClick={handleCopy}>지갑주소 복사하기</MenuItem>
+              <CopyToClipboard
+                text={localStorage.getItem("address") || ""}
+                onCopy={() => {
+                  showAlert({
+                    message: <>지갑주소가 복사되었습니다.</>,
+                  });
+                }}
+              >
+                <MenuItem>지갑주소 복사하기</MenuItem>
+              </CopyToClipboard>
               <MenuItem onClick={handleProfile}>프로필</MenuItem>
               <MenuItem onClick={handleSetting}>설정</MenuItem>
               <MenuItem onClick={handleLogout}>로그아웃</MenuItem>

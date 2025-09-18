@@ -1,6 +1,6 @@
-import { handleCopy } from "@/utils/copy";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import polygonImg from "../../../public/images/icon_polygon.svg";
+import CopyToClipboard from "react-copy-to-clipboard";
 
 export function TransactionCell({
   row,
@@ -130,14 +130,14 @@ export function WalletAddressCell({ value }: { value: string }) {
   return (
     <Box data-wallet-address>
       <Typography>{value}</Typography>
-      <Button
-        onClick={async () => {
-          await handleCopy(value);
+      <CopyToClipboard
+        text={value}
+        onCopy={() => {
           console.log("지갑 주소가 복사되었습니다.");
         }}
       >
-        복사
-      </Button>
+        <Button>복사</Button>
+      </CopyToClipboard>
     </Box>
   );
 }
@@ -163,13 +163,14 @@ export function TransactionHashCell({
         </a>
       </Typography>
 
-      <Button
-        onClick={async () => {
-          await handleCopy(value);
+      <CopyToClipboard
+        text={value}
+        onCopy={() => {
+          console.log("트랜잭션 주소가 복사되었습니다.");
         }}
       >
-        복사
-      </Button>
+        <Button>복사</Button>
+      </CopyToClipboard>
     </Box>
   );
 }
