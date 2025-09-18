@@ -1,4 +1,6 @@
+import { handleCopy } from "@/utils/copy";
 import { Box, Button, Link, Stack, Typography } from "@mui/material";
+import polygonImg from "../../../public/images/icon_polygon.svg";
 
 export function TransactionCell({
   row,
@@ -80,14 +82,13 @@ export function ApprovalButtonsCell({
 
 export function NetworkCell({ value }: { value: string }) {
   const CHAINS: Record<string, React.ReactNode> = {
-    "polygon-amoy": (
-      <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-        <circle cx="16" cy="16" r="16" fill="#8247E5" />
-        <path
-          d="M22.5 13.5l-4-2.3a2.1 2.1 0 0 0-2 0l-4 2.3a2.1 2.1 0 0 0-1 1.8v4.6a2.1 2.1 0 0 0 1 1.8l4 2.3a2.1 2.1 0 0 0 2 0l4-2.3a2.1 2.1 0 0 0 1-1.8v-4.6a2.1 2.1 0 0 0-1-1.8z"
-          fill="#fff"
-        />
-      </svg>
+    "Polygon-amoy": (
+      <img
+        src={polygonImg.src ?? polygonImg}
+        alt="Polygon"
+        width={20}
+        height={20}
+      />
     ),
     ETH: (
       <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
@@ -131,8 +132,8 @@ export function WalletAddressCell({ value }: { value: string }) {
       <Typography>{value}</Typography>
       <Button
         onClick={async () => {
-          await navigator.clipboard.writeText(value);
-          console.log("지갑 주소가 복사되었습니다:", value);
+          await handleCopy(value);
+          console.log("지갑 주소가 복사되었습니다.");
         }}
       >
         복사
@@ -164,8 +165,7 @@ export function TransactionHashCell({
 
       <Button
         onClick={async () => {
-          await navigator.clipboard.writeText(value);
-          console.log("지갑 주소가 복사되었습니다:", value);
+          await handleCopy(value);
         }}
       >
         복사
