@@ -1,5 +1,4 @@
 // components/common/MuiDataGrid.tsx
-
 import { Box } from "@mui/material";
 import {
   GridColDef,
@@ -60,7 +59,7 @@ export default function MuiDataGrid<T extends GridValidRowModel>({
         disableRowSelectionOnClick
         localeText={localeText}
         loading={loading}
-        hideFooter={rows.length === 0}
+        hideFooter={rows?.length === 0}
       />
     </Box>
   );
