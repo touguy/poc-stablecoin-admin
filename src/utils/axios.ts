@@ -2,7 +2,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: "http://ec2-43-203-22-216.ap-northeast-2.compute.amazonaws.com/service/",
   withCredentials: true, // 쿠키 기반 세션 사용 시
   timeout: 15_000,
   headers: {
