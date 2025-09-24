@@ -1,6 +1,8 @@
 import Layout from "@/components/Layout";
 import { useAuthStore } from "@/stores/authStore";
-import "@/styles/globals.css";
+import "@/styles/globals.scss";
+import theme from "@/theme/index.mjs";
+import { ThemeProvider } from "@mui/material/styles";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
@@ -11,6 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const isLoggedIn = useAuthStore((state) => state.isAuthenticated);
   const [authChecked, setAuthChecked] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const isPublicPath = useMemo(
     () => publicPaths.includes(router.asPath.split("?")[0]),
@@ -18,6 +21,12 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
     const handleAuth = async () => {
       if (!isLoggedIn && !isPublicPath) {
         await router.replace("/login");
@@ -33,17 +42,16 @@ export default function App({ Component, pageProps }: AppProps) {
     };
 
     handleAuth();
-  }, [router.asPath, isLoggedIn, isPublicPath]);
+  }, [hydrated, router.asPath, isLoggedIn, isPublicPath]);
 
   if (!authChecked) return null; // TODO  로딩 스피너 등으로 대체 가능
 
-  const title = (Component as any).title || "Dashboard";
-
-  return isPublicPath ? (
-    <Component {...pageProps} />
-  ) : (
-    <Layout title={title}>
-      <Component {...pageProps} />
-    </Layout>
+  const isLayout = (Component as any).isLayout ?? true;
+  return (
+    <ThemeProvider theme={theme}>
+      <Layout isLayout={isLayout}>
+        <Component {...pageProps} />
+      </Layout>
+    </ThemeProvider>
   );
 }
