@@ -1,6 +1,8 @@
 # 1단계: 빌드 환경
 FROM node:20-alpine AS builder
 
+RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 # package.json / package-lock.json 먼저 복사
