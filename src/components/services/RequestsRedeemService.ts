@@ -21,9 +21,9 @@ export const requestsRedeemService = {
       }
     );
   },
-  // 환불 요청 상세 조회
+  // 환불 요청 트랜잭션 상세 조회
   getDetail: (dto: SearchReqRedeemTxList, errorCallback?: any) => {
-    return api.post(`requests-redeem/detail/get`, dto);
+    return api.post(`requests-redeem/detail-tx/get`, dto);
   },
   //환불 승인/거절
   manage: (dto: RedeemManage) => {
