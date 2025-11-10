@@ -1,7 +1,7 @@
 import {
-    MintManage,
-    SearchReqMintList,
-    SearchReqMintTxList,
+  MintManage,
+  SearchReqMintList,
+  SearchReqMintTxList,
 } from "@/types/requestsMint";
 import { api } from "@/utils/axios";
 import { fetcher } from "@/utils/fetcher";
@@ -20,9 +20,9 @@ export const requestsMintService = {
       }
     );
   },
-  // 발행 요청 상세 조회
+  // 발행 요청 트랜잭션 상세 조회
   getDetail: (dto: SearchReqMintTxList, errorCallback?: any) => {
-    return api.post(`requests-mint/detail/get`, dto);
+    return api.post(`requests-mint/detail-tx/get`, dto);
   },
   //발행 승인/거절
   manage: (dto: MintManage) => {

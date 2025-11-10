@@ -1,5 +1,6 @@
 import Popup from "@/components/common/Popup";
 import ResultBox from "@/components/common/ResultBox";
+import { STABLECOINS } from "@/constants/stablecoin";
 import { formatAmount, formatDateTime } from "@/utils/formater";
 import { Box, Button } from "@mui/material";
 
@@ -40,7 +41,7 @@ const RequestConfirmCard = ({
         { label: "거래번호", value: trackingRef },
         {
           label: `${method} 신청 수량`,
-          value: `${formatAmount(requestTokenAmount)} KRWH`,
+          value: `${formatAmount(requestTokenAmount)} ${STABLECOINS.SYMBOL}`,
         },
         { label: "신청일시", value: formatDateTime(reqAt) },
         { label: "네트워크", value: chain?.chainName || "-" },
@@ -64,7 +65,7 @@ const RequestConfirmCard = ({
         { label: "거래번호", value: trackingRef },
         {
           label: `${method} 신청 수량`,
-          value: `${formatAmount(requestTokenAmount)} KRWH`,
+          value: `${formatAmount(requestTokenAmount)} ${STABLECOINS.SYMBOL}`,
         },
         { label: "신청일시", value: formatDateTime(reqAt) },
         { label: "네트워크", value: chain?.chainName || "-" },
