@@ -15,6 +15,7 @@ import { useState } from "react";
 import MuiDataGrid from "../../../common/MuiDataGrid";
 import RequestConfirmCard from "../../confirm/RequestConfirmCard";
 import RequestDetailCard from "../../detail/RequestDetailCard";
+import { STABLECOINS } from "@/constants/stablecoin";
 
 type RedeemListTableProps = {
   data: any;
@@ -91,7 +92,7 @@ const RedeemListTable = ({
     { field: "applicantId", headerName: "신청자 ID", width: 130 },
     {
       field: "requestedIssueCount",
-      headerName: "발행 신청 수량(KRWH)",
+      headerName: `발행 신청 수량(${STABLECOINS.SYMBOL})`,
       width: 170,
       align: "right",
     },
