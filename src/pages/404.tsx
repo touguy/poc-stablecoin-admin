@@ -1,8 +1,10 @@
+// 이 파일은 404 Not Found 페이지 컴포넌트를 정의합니다.
 import { Button, Container, Typography } from "@mui/material";
 import type { NextPage } from "next";
 import Link from "next/link";
 
 const Custom404: NextPage & { isLayout?: boolean } = () => {
+  // 404 에러 페이지의 UI를 렌더링합니다.
   return (
     <Container
       maxWidth="sm"
@@ -33,6 +35,6 @@ const Custom404: NextPage & { isLayout?: boolean } = () => {
   );
 };
 
-Custom404.isLayout = false;
+Custom404.isLayout = false; // 이 페이지는 레이아웃을 사용하지 않음을 표시합니다.
 
 export default Custom404;

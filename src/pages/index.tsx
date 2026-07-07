@@ -1,4 +1,6 @@
+// 이 파일은 스테이블 코인 서비스의 메인 랜딩 페이지를 구성합니다.
 export default function Home() {
+  // 홈 페이지의 UI와 내용을 렌더링합니다.
   return (
     <div className="max-w-2xl mx-auto mt-16 p-8 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-6 text-center">

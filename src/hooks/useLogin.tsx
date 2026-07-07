@@ -1,3 +1,4 @@
+// 이 파일은 사용자 로그인 및 로그아웃 기능을 관리하는 커스텀 훅을 제공합니다.
 import { ADMIN_INFO } from "@/constants/adminInfo";
 import { useAuthStore } from "@/stores/authStore";
 import { LoginReq } from "@/types/auth";
@@ -14,12 +15,21 @@ interface DecodedToken {
   address: string;
 }
 
+/**
+ * 로그인 및 로그아웃 상태 관리를 위한 훅입니다.
+ * @returns {login, logout, loading, error, decodeToken} 로그인 관련 함수 및 상태
+ */
 export function useLogin() {
   const { setUser, logout: resetAuthStore } = useAuthStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * API를 호출하여 사용자를 로그인 처리하고 인증 정보를 저장합니다.
+   * @param payload - 로그인 요청에 필요한 데이터 (LoginReq 타입)
+   * @returns 성공 시 사용자 ID와 주소를 포함하는 객체
+   */
   const login = useCallback(
     async (payload: LoginReq) => {
       setLoading(true);
@@ -60,6 +70,9 @@ export function useLogin() {
     [setUser]
   );
 
+  /**
+   * 사용자의 세션을 종료하고 인증 상태를 초기화합니다.
+   */
   const logout = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -81,6 +94,11 @@ export function useLogin() {
     }
   }, [resetAuthStore]);
 
+  /**
+   * JWT 토큰을 디코딩하여 사용자 ID와 주소를 추출합니다.
+   * @param token - 디코딩할 JWT 문자열
+   * @returns 디코딩된 사용자 정보 객체 또는 null (디코딩 실패 시)
+   */
   const decodeToken = (token: string): DecodedToken | null => {
     try {
       const decoded: any = jwtDecode(token);

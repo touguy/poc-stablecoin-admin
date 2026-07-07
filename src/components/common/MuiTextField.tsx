@@ -1,3 +1,5 @@
+// 이 컴포넌트는 Material-UI의 TextField를 커스터마이징하여 사용자가 입력 필드를 쉽게 사용할 수 있도록 돕습니다.
+// 클리어 버튼, 다양한 속성(에러, 도움말 텍스트 등)을 지원합니다.
 import {
   IconButton,
   InputAdornment,
@@ -33,6 +35,7 @@ export default function MuiTextField({
   type?: string;
 }) {
 
+  // 입력 필드의 내용을 지우는 핸들러 함수입니다.
   const handleClear = () => {
     if (onChange) {
       const customEvent = {
@@ -42,6 +45,7 @@ export default function MuiTextField({
     }
   };
 
+  // 값이 있을 경우에만 표시되는 클리어 아이콘 컴포넌트입니다.
   const clearIcon = value ? (
     <IconButton onClick={handleClear} edge="end">
       <Image

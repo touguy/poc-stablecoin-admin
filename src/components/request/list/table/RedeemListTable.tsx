@@ -1,3 +1,4 @@
+// 이 컴포넌트는 스테이블코인 환불 요청 목록을 테이블 형태로 표시하고, 상세 조회 및 승인/거절 기능을 제공합니다.
 import {
   ApprovalButtonsCell,
   NetworkCell,
@@ -36,14 +37,14 @@ const RedeemListTable = ({
   limit,
   setLimit,
 }: RedeemListTableProps) => {
-  // 로그인 사용자 정보
+  // 로그인 사용자 정보 가져오기
   const { user } = useAuthStore();
 
   // 상태 관리
   const [selectedRequestId, setSelectedRequestId] = useState<number>(0); // 선택된 요청 ID
-  const [isOpen, setIsOpen] = useState(false); // 트랜잭션 상세 모달
+  const [isOpen, setIsOpen] = useState(false); // 트랜잭션 상세 모달 열림 상태
 
-  // 승인/거절 훅
+  // 승인/거절 훅 초기화 (환불 메소드 사용)
   const {
     confirmLoading,
     openApprovalPopup,
@@ -58,16 +59,18 @@ const RedeemListTable = ({
     mutate,
   });
 
-  // 테이블 관리
+  // 테이블 관리 함수: 페이지 변경 처리
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
 
+  // 테이블 관리 함수: 페이지 크기 변경 처리
   const handlePageSizeChange = (newPageSize: number) => {
     setLimit(newPageSize);
     setPage(0);
   };
 
+  // 데이터 그리드 컬럼 정의
   const columns: GridColDef[] = [
     { field: "transactionId", headerName: "거래번호", width: 120 },
     {
@@ -126,22 +129,24 @@ const RedeemListTable = ({
     { field: "approvalDateTime", headerName: "승인/거절 일시", width: 180 },
   ];
 
+  // API 응답 데이터를 테이블 행(row) 형식으로 변환하는 함수
   const rows =
     data?.data.items.map((item: any) => ({
       id: item.id,
       transactionId: item.trackingRef,
-      transaction: item.transactionHash,
+      transaction: item.transactionHash, // 환불의 경우 트랜잭션 해시를 사용
       network: item.chain.chainName,
       applicationDateTime: formatDateTime(item.reqAt),
       applicantId: item.reqUsrLoginId,
       requestedIssueCount: formatAmount(item.requestTokenAmount),
-      issuedWalletAddress: item.redeem.redeemFromAddress,
-      refundAccount: item.redeem.redeemBankAccount,
+      issuedWalletAddress: item.redeem.redeemFromAddress, // 환불 시 출금 주소
+      refundAccount: item.redeem.redeemBankAccount, // 환불 계좌 정보
       status: item.requestStatus,
       approvalDateTime: formatDateTime(item.statusUpdatedAt) || "-",
     })) || [];
+
   /**
-   * 트랜잭션 상세 모달
+   * 트랜잭션 상세 모달 열기/닫기 핸들러
    */
   const handleTransactionClick = (row: any) => {
     if (selectedRequestId === row.id) {
@@ -157,10 +162,13 @@ const RedeemListTable = ({
     }
   };
 
+  /**
+   * 승인/거절 버튼 클릭 핸들러
+   */
   const handleApprovalClick = (row: any, value: string) => {
     setSelectedRequestId(row.id);
-    setActionStatus(value); // "승인" or "거절"
-    setOpenApprovalPopup(true);
+    setActionStatus(value); // "승인" or "거절" 상태 설정
+    setOpenApprovalPopup(true); // 승인 팝업 열기
   };
 
   return (
@@ -170,6 +178,7 @@ const RedeemListTable = ({
       ) : (
         <>
           <Box sx={{ mt: "1.2rem" }}>
+            {/* 데이터 그리드 컴포넌트 렌더링 */}
             <MuiDataGrid
               rows={rows}
               columns={columns}
@@ -182,6 +191,7 @@ const RedeemListTable = ({
             />
           </Box>
 
+          {/* 요청 상세 정보 모달 */}
           <RequestDetailCard
             requestId={selectedRequestId}
             isOpen={isOpen}
@@ -191,13 +201,14 @@ const RedeemListTable = ({
                 (item: any) => item.id === selectedRequestId
               )?.chain?.explorerUrl || ""
             }
-            method="환불"
+            method="환불" // 환불 메소드 지정
           />
 
+          {/* 승인/거절 확인 팝업 */}
           <RequestConfirmCard
             openApprovalPopup={openApprovalPopup}
             setOpenApprovalPopup={setOpenApprovalPopup}
-            method="환불"
+            method="환불" // 환불 메소드 지정
             title="서명 요청"
             actionStatus={actionStatus}
             handleConfirm={() => {
